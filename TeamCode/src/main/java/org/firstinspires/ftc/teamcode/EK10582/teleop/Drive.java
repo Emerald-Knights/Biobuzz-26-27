@@ -16,18 +16,12 @@ public class Drive extends EKLinear {
             robot.mecanumDrive.rx = driverStation.getRightStickX();
 
             //slowmode
-            if (driverStation.getLB2()) {
-                if (robot.mecanumDrive.slowMode == 1)
-                    robot.mecanumDrive.slowMode = 0.5;
-                else {
-                    robot.mecanumDrive.slowMode = 1;
-                }
-            }
 
-            if(driverStation.getRightTrigger1()>0.2){
-                if(robot.mecanumDrive.slowMode != 0.8){
+            if (driverStation.getLB1()){
+                if (robot.mecanumDrive.slowMode == 0.5)
                     robot.mecanumDrive.slowMode = 0.8;
-                }
+                else
+                    robot.mecanumDrive.slowMode = 0.5;
             }
 
             robot.intake.activeIntake= driverStation.gamepad1.right_bumper;
