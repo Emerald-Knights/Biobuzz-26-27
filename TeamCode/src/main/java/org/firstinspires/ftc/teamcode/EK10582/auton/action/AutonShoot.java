@@ -70,7 +70,7 @@ public class AutonShoot extends Action {
             case SPIN1:
                 //Robot.getInstance().launch.activeLaunch = true;
                 Robot.getInstance().launchMotor.setPower(0.8);
-                if (stateTimer.milliseconds() >= 250) {
+                if (stateTimer.milliseconds() >= 300) {
                     shootCounter++;
                     setInternalState(shootCounter >= MAX_SHOOTS ? State.FINISHED : State.WAIT1);
                 }
@@ -80,7 +80,7 @@ public class AutonShoot extends Action {
             case WAIT1:
                 //Robot.getInstance().launch.activeLaunch = true;
                 Robot.getInstance().launchMotor.setPower(0.0);
-                if (stateTimer.milliseconds() >= 1200) {
+                if (stateTimer.milliseconds() >= 2000) {
                     setInternalState(State.SPIN2);
                 }
                 break;
@@ -100,7 +100,7 @@ public class AutonShoot extends Action {
                 //Robot.getInstance().launch.activeLaunch = true;
                 Robot.getInstance().launchMotor.setPower(0.0);
                 Robot.getInstance().intakeMotor.setPower(0.8);
-                if (stateTimer.milliseconds() >= 1200) {
+                if (stateTimer.milliseconds() >= 800) {
                     setInternalState(State.WAIT2);
                 }
                 break;
@@ -118,7 +118,7 @@ public class AutonShoot extends Action {
                 //Robot.getInstance().launch.activeLaunch = true;
                 Robot.getInstance().launchMotor.setPower(0.8);
                 Robot.getInstance().intakeMotor.setPower(0.0);
-                if (stateTimer.milliseconds() >= 250) {
+                if (stateTimer.milliseconds() >= 300) {
                     shootCounter++;
                     setInternalState(shootCounter >= MAX_SHOOTS ? State.FINISHED : State.WAIT3);
                 }
@@ -130,7 +130,7 @@ public class AutonShoot extends Action {
                 // and the previous shot's RPM drop.
                 //Robot.getInstance().launch.activeLaunch = false;
                 Robot.getInstance().launchMotor.setPower(0.0);
-                if (stateTimer.milliseconds() >= 1200) {
+                if (stateTimer.milliseconds() >= 1700) {
                     setInternalState(State.SPIN4);
                 }
                 break;

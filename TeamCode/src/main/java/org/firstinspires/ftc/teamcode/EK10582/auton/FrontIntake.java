@@ -31,8 +31,8 @@ public class FrontIntake extends AutonBase {
     // our poses
     private final Pose startPose = frontIntake.of(56, 8, 270);
     private final Pose shoot = frontIntake.of(56, 18, 270);
-    private final Pose ballBack = frontIntake.of(30, 10, 180);
-    private final Pose ballPosition = frontIntake.of(5, 10, 180);
+    private final Pose ballBack = frontIntake.of(30, 7, 180);
+    private final Pose ballPosition = frontIntake.of(5, 7, 180);
     private final Pose park = frontIntake.of(5.75, 92, 270);
 
 
@@ -75,8 +75,8 @@ public class FrontIntake extends AutonBase {
         waitForStart(); // creates the follower at startPose()
         run(sequential(
                 action(new AutonFlowerUp()),
-                follow(follower, shoot()),
                 action(new AutonShoot()),
+                follow(follower, shoot()),
                 follow(follower, intakeReady()),
                 parallel(
                         follow(follower, intake()),

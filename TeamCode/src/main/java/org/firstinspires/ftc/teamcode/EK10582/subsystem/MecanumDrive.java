@@ -55,6 +55,16 @@ public class MecanumDrive extends Subsystem {
     public void printToTelemetry(Telemetry telemetry){
         telemetry.addData("position: ", ratio);
 
+        if(slowMode == 0.5) {
+            telemetry.addData("slow mode: ", "true");
+        }
+        else if(slowMode == 0.8){
+            telemetry.addData("slow mode: ", "false");
+        }
+        else{
+            return;
+        }
+
     }
 
 }
