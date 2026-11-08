@@ -9,6 +9,14 @@ public class SubsystemConstants {
 
     public static double FLOWER_DOWN = 0.7707;
 
+    public enum TrackingGoal{
+        REDFRONT, REDBACK, BLUEFRONT, BLUEBACK;
+    }
+
+    public enum TurretStates {
+        AUTO, MANUAL;
+    }
+
 
 
 

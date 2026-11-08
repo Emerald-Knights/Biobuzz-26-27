@@ -23,7 +23,7 @@ public class Robot {
     HardwareMap hardwareMap;
     EKLinear linearOpMode;
 
-    public DcMotorEx leftFront, leftBack, rightFront, rightBack, intakeMotor;
+    public DcMotorEx leftFront, leftBack, rightFront, rightBack, intakeMotor, launchMotor, spinMotor;
 
     public Servo flowerServo;
 //
@@ -46,8 +46,8 @@ public class Robot {
     public Turret launch = new Turret();
 
     //Lists of active subsystems and telemetry
-    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, flower);
-    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, flower);
+    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, flower, launch);
+    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, flower, launch);
 
     //Creates an arraylist called actions that stores all the actions that are currently being done
     private ArrayList<Action> actions = new ArrayList<Action>();
@@ -71,6 +71,8 @@ public class Robot {
 
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        launchMotor = hardwareMap.get(DcMotorEx.class, "launchMotor");
+        spinMotor = hardwareMap.get(DcMotorEx.class, "spinMotor");
 
 
 
