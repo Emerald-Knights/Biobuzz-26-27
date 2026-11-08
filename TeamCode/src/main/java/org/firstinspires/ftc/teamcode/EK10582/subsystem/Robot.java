@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.EK10582.subsystem;
 
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,7 +8,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.EK10582.EKLinear;
 import org.firstinspires.ftc.teamcode.EK10582.auton.action.Action;
 
@@ -27,7 +23,7 @@ public class Robot {
     HardwareMap hardwareMap;
     EKLinear linearOpMode;
 
-    public DcMotorEx leftFront, leftBack, rightFront, rightBack, intakeMotor, launchMotor;
+    public DcMotorEx leftFront, leftBack, rightFront, rightBack, intakeMotor;
 
     public Servo flowerServo;
 //
@@ -47,11 +43,11 @@ public class Robot {
     public Flower flower = new Flower();
 
 
-    public Launch launch = new Launch();
+    public Turret launch = new Turret();
 
     //Lists of active subsystems and telemetry
-    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, launch, flower);
-    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, launch, flower);
+    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, flower);
+    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, flower);
 
     //Creates an arraylist called actions that stores all the actions that are currently being done
     private ArrayList<Action> actions = new ArrayList<Action>();
@@ -75,7 +71,6 @@ public class Robot {
 
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        launchMotor = hardwareMap.get(DcMotorEx.class, "launchMotor");
 
 
 
