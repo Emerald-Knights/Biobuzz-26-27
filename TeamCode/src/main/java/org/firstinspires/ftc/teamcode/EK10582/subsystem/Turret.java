@@ -230,6 +230,9 @@ public class Turret extends Subsystem {
     public void update(boolean isAuton) {
         follower.update();
         pose = follower.pose();
+        xPose = pose.x();
+        yPose = pose.y();
+        botHeading = pose.heading();
 
     }
 
