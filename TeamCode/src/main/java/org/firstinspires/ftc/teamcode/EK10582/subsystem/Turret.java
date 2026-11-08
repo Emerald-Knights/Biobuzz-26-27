@@ -145,7 +145,7 @@ public class Turret extends Subsystem {
 
         targetHeading = Math.atan2(targetX - xPose, targetY - yPose);
         targetHeading = Math.toDegrees(targetHeading);
-        double error = targetHeading - currentHeading;
+        double error = AngleUnit.normalizeDegrees(targetHeading - currentHeading);
 
         // --- Low-pass filter the error ---
         if (!errorFiltInit) {
