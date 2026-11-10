@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.EK10582.auton;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.hardware.limelightvision.LLResult;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.EK10582.auton.action.AutonFlowerUp;
 import org.firstinspires.ftc.teamcode.EK10582.auton.action.AutonShoot;
 
@@ -23,6 +28,9 @@ public class BackShoot extends AutonBase {
         return PoseFactory.degrees();
     }
 
+    private double distance;
+    private double AprilTagFar;
+
     private final PoseFactory backShoot = poseFactory();
     // our poses
     private final Pose startPose = backShoot.of(62, 132, 90);
@@ -38,10 +46,32 @@ public class BackShoot extends AutonBase {
         return line(shoot, park).linear(shoot, park);
 
     }
+
     @Override
     protected Pose startPose() {
         return startPose;
     }
+
+    Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
+    LLResult llResult = limelight.getLatestResult();
+
+    public boolean distanceTracker() {
+        if (llResult != null && llResult.isValid()) {
+            Pose3D botPose = llResult.getBotpose_MT2();
+            distance = getDistanceFromTags(llResult.getTa());
+        }
+
+        return distance < AprilTagFar;
+    }
+
+    public double getDistanceFromTags(double ta) {
+        double scale = 176.9951;
+        double power = -0.5621096;
+        double distance = scale * Math.pow(ta, power);
+        return distance;
+    }
+
+
 
     @Override
     protected void autonTelemetry() {
@@ -54,13 +84,15 @@ public class BackShoot extends AutonBase {
     @Override
     public void runOpMode() {
         waitForStart(); // creates the follower at startPose()
-        run(sequential(
+        run(
+                sequential(
                 action(new AutonFlowerUp()),
                 waitMs(15000), // wait 15 seconds before driving
                 follow(follower, shoot()),
                 action(new AutonShoot()),
                 follow(follower, park()),
                 waitMs(2000)
-        ));
+                )
+        );
     }
 }
