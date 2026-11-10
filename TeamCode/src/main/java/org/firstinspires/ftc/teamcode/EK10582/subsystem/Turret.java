@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.EK10582.subsystem;
 
 
-import static com.sun.tools.doclint.Entity.and;
+import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.BLUEBACK;
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.BLUEFRONT;
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.REDBACK;
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.REDFRONT;
@@ -138,14 +138,14 @@ public class Turret extends Subsystem {
             targetY = 60;
         }
 
-        if (currentTargetGoal == REDFRONT) {
+        if (currentTargetGoal == BLUEBACK) {
             targetX = 84;
             targetY = 84;
         }
 
-        targetHeading = Math.atan2(targetX - xPose, targetY - yPose);
+        targetHeading = Math.atan2(targetY - yPose, targetX - xPose);
         targetHeading = Math.toDegrees(targetHeading);
-        double error = targetHeading - currentHeading;
+        double error = AngleUnit.normalizeDegrees(targetHeading - currentHeading);
 
         // --- Low-pass filter the error ---
         if (!errorFiltInit) {
@@ -230,6 +230,17 @@ public class Turret extends Subsystem {
     public void update(boolean isAuton) {
         follower.update();
         pose = follower.pose();
+        xPose = pose.x();
+        yPose = pose.y();
+        currentHeading = Math.toDegrees(pose.heading());
+        turretUpdate(currentHeading, getYawDeg());
+
+        if(activeLaunch){
+            Robot.getInstance().launchMotor.setPower(0.5);
+        }
+        else {
+            Robot.getInstance().launchMotor.setPower(0.0);
+        }
 
     }
 

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.EK10582.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.EK10582.EKLinear;
 import org.firstinspires.ftc.teamcode.EK10582.subsystem.Flower;
+import org.firstinspires.ftc.teamcode.EK10582.subsystem.Subsystem;
+import org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants;
 
 @TeleOp(name="New Drive")
 public class Drive extends EKLinear {
@@ -31,7 +33,22 @@ public class Drive extends EKLinear {
             //driver 2 controls
 
             robot.intake.reverseIntake= driverStation.gamepad2.b;
-            robot.launch.activeLaunch = driverStation.gamepad2.right_bumper;
+
+            robot.turret.activeLaunch = driverStation.gamepad2.right_bumper;
+
+            // turret target goal
+            if(driverStation.gamepad2.dpad_up){
+                robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.REDFRONT;
+                }
+            else if (driverStation.gamepad2.dpad_down){
+                robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.REDBACK;
+            }
+            else if(driverStation.gamepad2.dpad_left){
+                robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.BLUEBACK;
+            }
+            else if(driverStation.gamepad2.dpad_right){
+                robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.BLUEFRONT;
+            }
 
             robot.flower.up = driverStation.gamepad2.x;
             robot.flower.down = driverStation.gamepad2.a;
