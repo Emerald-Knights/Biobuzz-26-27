@@ -87,9 +87,9 @@ public class BackShoot extends AutonBase {
         run(
                 sequential(
                 action(new AutonFlowerUp()),
-                waitMs(15000), // wait 15 seconds before driving
-                follow(follower, shoot()),
+                waitMs(15000),
                 action(new AutonShoot()),
+                follow(follower, shoot()),
                 follow(follower, park()),
                 waitMs(2000)
                 )

@@ -32,12 +32,14 @@ public class FrontIntake extends AutonBase {
     private final Pose startPose = frontIntake.of(56, 8, 270);
     private final Pose shoot = frontIntake.of(56, 18, 270);
     private final Pose ballBack = frontIntake.of(30, 7, 180);
-    private final Pose ballPosition = frontIntake.of(5, 7, 180);
+    private final Pose ballPosition = frontIntake.of(4.5, 7, 180);
+
+    private final Pose ballPosition2 = frontIntake.of(18, 7, 180);
     private final Pose park = frontIntake.of(5.75, 92, 270);
 
 
     //poses from before
-    private final Pose controlPose1 = frontIntake.of(38, 60, 0);
+    private final Pose controlPose1 = frontIntake.of(30, 60, 0);
 
     private Path shoot() {
         return line(startPose, shoot).linear(startPose, shoot);
@@ -48,10 +50,10 @@ public class FrontIntake extends AutonBase {
     private Path intake() {
         //caps speed at 20 in/s for just this path so the intake has time to grab the balls
         return line(ballBack, ballPosition).linear(ballBack, ballPosition)
-                .with(Constants.foresightConfig.maxVelocityConstraint.at(26.0));
+                .with(Constants.foresightConfig.maxVelocityConstraint.at(27.5));
     }
     private Path intakeBack() {
-        return line(ballPosition, ballBack).linear(ballPosition, ballBack);
+        return line(ballPosition2, ballBack).linear(ballPosition2, ballBack);
     }
     private Path park() {
         return curve(ballBack,controlPose1, park).linear(ballBack, park);
@@ -83,10 +85,7 @@ public class FrontIntake extends AutonBase {
                         action(new AutonIntake(3000))
                 ),
                 waitMs(500),
-                parallel(
-                        follow(follower, intakeBack()),
-                        action(new AutonIntake(3000))
-                ),
+                follow(follower, intakeBack()),
                 follow(follower, park()),
                 waitMs(2000)
 

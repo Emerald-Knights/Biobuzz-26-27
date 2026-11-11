@@ -72,8 +72,8 @@ public class FrontFlower extends AutonBase {
         waitForStart(); // creates the follower at startPose()
         run(sequential(
                 action(new AutonFlowerUp()),
-                follow(follower, shoot()),
                 action(new AutonShoot()),
+                follow(follower, shoot()),
                 follow(follower, intakeReady()),
                 action(new AutonFlowerDown()),
                 follow(follower, intake()),
