@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Robot {
 
-    static Robot robot = null;
+    public static Robot robot = null;
 
     HardwareMap hardwareMap;
     EKLinear linearOpMode;
@@ -27,7 +27,8 @@ public class Robot {
     //launchMotor is turretMotor that shoots, spinMotor is the turret motor that rotates
     public DcMotorEx leftFront, leftBack, rightFront, rightBack, intakeMotor, launchMotor, spinMotor;
 
-    public Servo flowerServo;
+    public Servo flowerServo, transferServo;
+
 //
 //    public CRServo;
 
@@ -44,12 +45,13 @@ public class Robot {
 
     public Flower flower = new Flower();
 
+    public Transfer transfer = new Transfer();
 
     public Turret turret = new Turret();
 
     //Lists of active subsystems and telemetry
-    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, flower, turret);
-    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, flower, turret);
+    public List<Subsystem> subsystems = Arrays.asList(mecanumDrive, intake, flower, turret, transfer);
+    public List<Subsystem> telemetrySubsystems = Arrays.asList(mecanumDrive, intake, flower, turret, transfer);
 
     //Creates an arraylist called actions that stores all the actions that are currently being done
     private ArrayList<Action> actions = new ArrayList<Action>();
@@ -80,7 +82,7 @@ public class Robot {
 
         //servo hardwareMapping
         flowerServo = hardwareMap.get(Servo.class, "flowerServo");
-
+        transferServo = hardwareMap.get(Servo.class, "transferServo");
 //
 
 

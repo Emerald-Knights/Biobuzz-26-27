@@ -27,19 +27,19 @@ public class DriveTest extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
 
         while (opModeIsActive()) {
-            if (timer.seconds() < RUN_SECONDS) {
-                leftFront.setPower(RUN_POWER);
-                leftBack.setPower(RUN_POWER);
-                rightFront.setPower(RUN_POWER);
-                rightBack.setPower(RUN_POWER);
-            } else {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightFront.setPower(0);
-                rightBack.setPower(0);
-            }
+          //  if (timer.seconds() < RUN_SECONDS) {
+//                leftFront.setPower(RUN_POWER);
+//                leftBack.setPower(RUN_POWER);
+//                rightFront.setPower(RUN_POWER);
+//                rightBack.setPower(RUN_POWER);
+//            } else {
+//                leftFront.setPower(0);
+//                leftBack.setPower(0);
+//                rightFront.setPower(0);
+//                rightBack.setPower(0);
+//            }
 
-            telemetry.addData("time", "%.1f s", timer.seconds());
+            //telemetry.addData("time", "%.1f s", timer.seconds());
             telemetry.addData("leftFront pos", leftFront.getCurrentPosition());
             telemetry.update();
         }

@@ -53,6 +53,8 @@ public class Drive extends EKLinear {
             robot.flower.up = driverStation.gamepad2.x;
             robot.flower.down = driverStation.gamepad2.a;
             robot.flower.medium = driverStation.gamepad2.y;
+            robot.transfer.activeTransfer= driverStation.gamepad1.right_bumper;
+            robot.transfer.lastBall= driverStation.gamepad1.left_bumper;
 
 
             telemetry.addData("Reset: ", driverStation.getReset());
