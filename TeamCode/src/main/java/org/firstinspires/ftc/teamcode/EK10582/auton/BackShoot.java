@@ -12,11 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.EK10582.auton.action.AutonFlowerUp;
 import org.firstinspires.ftc.teamcode.EK10582.auton.action.AutonShoot;
+import org.firstinspires.ftc.teamcode.EK10582.auton.action.Limelight;
 
 import static com.pedropathing.api.Paths.*;
 
 import com.pedropathing.paths.Path;
 
+import static com.pedropathing.ivy.commands.Commands.conditional;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
@@ -27,9 +30,6 @@ public class BackShoot extends AutonBase {
     protected PoseFactory poseFactory() {
         return PoseFactory.degrees();
     }
-
-    private double distance;
-    private double AprilTagFar;
 
     private final PoseFactory backShoot = poseFactory();
     // our poses
@@ -51,28 +51,6 @@ public class BackShoot extends AutonBase {
     protected Pose startPose() {
         return startPose;
     }
-
-    Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-    LLResult llResult = limelight.getLatestResult();
-
-    public boolean distanceTracker() {
-        if (llResult != null && llResult.isValid()) {
-            Pose3D botPose = llResult.getBotpose_MT2();
-            distance = getDistanceFromTags(llResult.getTa());
-        }
-
-        return distance < AprilTagFar;
-    }
-
-    public double getDistanceFromTags(double ta) {
-        double scale = 176.9951;
-        double power = -0.5621096;
-        double distance = scale * Math.pow(ta, power);
-        return distance;
-    }
-
-
-
     @Override
     protected void autonTelemetry() {
         allTelemetry.addData("X", follower.pose().x());
@@ -81,18 +59,36 @@ public class BackShoot extends AutonBase {
         allTelemetry.addData("Follower Mode", follower.mode());
     }
 
+
     @Override
     public void runOpMode() {
         waitForStart(); // creates the follower at startPose()
+
+        Limelight limelightAction = new Limelight();
+
         run(
-                sequential(
-                action(new AutonFlowerUp()),
-                waitMs(15000),
-                action(new AutonShoot()),
-                follow(follower, shoot()),
-                follow(follower, park()),
-                waitMs(2000)
+                parallel(
+                        action(limelightAction),
+
+                        sequential(
+                                action(new AutonFlowerUp()),
+                                conditional(
+                                        limelightAction::distanceTracker,
+
+                                        sequential(
+                                                follow(follower, shoot()),
+                                                action(new AutonShoot())
+                                        ),
+
+                                        // Otherwise
+                                        waitMs(2000)
+                                ),
+
+                                follow(follower, park()),
+                                waitMs(2000)
+                        )
                 )
         );
     }
 }
+
