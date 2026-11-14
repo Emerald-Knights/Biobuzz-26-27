@@ -236,19 +236,25 @@ public class Turret extends Subsystem {
         turretUpdate(currentHeading, getYawDeg());
 
         if(activeLaunch){
-            Robot.getInstance().launchMotor.setPower(0.5);
+            Robot.getInstance().launchMotor.setVelocity(1000);
         }
         else {
-            Robot.getInstance().launchMotor.setPower(0.0);
+            Robot.getInstance().launchMotor.setVelocity(0);
         }
 
     }
 
     public void stop() {
+        Robot.getInstance().spinMotor.setPower(0);
+        Robot.getInstance().launchMotor.setPower(0);
 
     }
 
     public void printToTelemetry(Telemetry telemetry) {
+        telemetry.addData("X", xPose);
+        telemetry.addData("Y", yPose);
+        telemetry.addData("Turret Heading", currentHeading);
+        telemetry.addData("Power", Robot.getInstance().launchMotor.getVelocity());
 
 
     }
