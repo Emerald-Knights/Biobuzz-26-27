@@ -25,6 +25,21 @@ public class Flower extends Subsystem {
 
     private double targetPosition = Double.NaN;
 
+    public void cycleState() {
+        switch (state) {
+            case DOWN:
+                state = State.MEDIUM;
+                break;
+            case MEDIUM:
+                state = State.UP;
+                break;
+            case UP:
+            default:
+                state = State.DOWN;
+                break;
+        }
+    }
+
     public void init(boolean isAuton) {
         state = State.MEDIUM;
         down = false;
