@@ -19,10 +19,6 @@ public class Flower extends Subsystem {
 
     public State state = State.MEDIUM;
 
-    public boolean down;
-    public boolean up;
-    public boolean medium;
-
     private double targetPosition = Double.NaN;
 
     public void cycleState() {
@@ -42,20 +38,10 @@ public class Flower extends Subsystem {
 
     public void init(boolean isAuton) {
         state = State.MEDIUM;
-        down = false;
-        up = false;
-        medium = false;
         targetPosition = Double.NaN;
     }
 
     public void update(boolean isAuton) {
-        if (down) {
-            state = State.DOWN;
-        } else if (up) {
-            state = State.UP;
-        } else if (medium) {
-            state = State.MEDIUM;
-        }
 
         double position;
         switch (state) {
@@ -79,7 +65,7 @@ public class Flower extends Subsystem {
     }
 
     public void stop() {
-
+        Robot.getInstance().flowerServo.setPosition(FLOWER_UP);
     }
 
     public void printToTelemetry(Telemetry telemetry) {

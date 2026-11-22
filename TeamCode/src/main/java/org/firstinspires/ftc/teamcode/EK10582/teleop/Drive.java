@@ -53,6 +53,7 @@ public class Drive extends EKLinear {
             if (driverStation.getX2()) {
                 robot.flower.cycleState();
             }
+
             robot.transfer.activeTransfer= driverStation.gamepad1.right_bumper;
             robot.transfer.lastBall= driverStation.gamepad1.left_bumper;
 
