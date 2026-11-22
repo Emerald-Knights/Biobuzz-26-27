@@ -9,11 +9,11 @@ public class SubsystemConstants {
 
     public static double FLOWER_DOWN = 0.7707;
 
-    public static double LOW = .67;
+    public static double GOPOSITION = .67;
 
-    public static double HIGH = .76;
+    public static double PUSHPOSITION = .76;
 
-    public static double REST = .41;
+    public static double STOPPOSITION = .41;
 
 
     public enum TrackingGoal{

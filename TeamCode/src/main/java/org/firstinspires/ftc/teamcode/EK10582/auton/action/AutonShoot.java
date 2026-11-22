@@ -38,7 +38,7 @@ public class AutonShoot extends Action {
         switch (currentState) {
             case SHOOT:
                 //Robot.getInstance().launch.activeLaunch = true;
-                Robot.getInstance().transferServo.setPosition(SubsystemConstants.REST);
+                Robot.getInstance().transferServo.setPosition(SubsystemConstants.GOPOSITION);
                 Robot.getInstance().launchMotor.setVelocity(1500);
                 Robot.getInstance().intakeMotor.setPower(0.8);
                 if (stateTimer.milliseconds() >= 5000) {
@@ -48,7 +48,7 @@ public class AutonShoot extends Action {
 
             case SHOOTEND:
                 //Robot.getInstance().launch.activeLaunch = true;
-                Robot.getInstance().transferServo.setPosition(SubsystemConstants.HIGH);
+                Robot.getInstance().transferServo.setPosition(SubsystemConstants.PUSHPOSITION);
                 Robot.getInstance().launchMotor.setVelocity(1500);
                 Robot.getInstance().intakeMotor.setPower(0);
 
@@ -78,7 +78,7 @@ public class AutonShoot extends Action {
         //Robot.getInstance().launch.activeLaunch = false;
         Robot.getInstance().launchMotor.setPower(0.0);
         Robot.getInstance().intakeMotor.setPower(0.0);
-        Robot.getInstance().transferServo.setPosition(SubsystemConstants.LOW);
+        Robot.getInstance().transferServo.setPosition(SubsystemConstants.GOPOSITION);
 //        Robot.getInstance().inServo.setPosition(SubsystemConstants.TRANSFER_REST);
     }
 
