@@ -8,8 +8,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class Limelight extends Action {
-    //this is an abstract parent class for all of the actions the robot will do.
-    //some examples of actions are: moveArm, collectPixel, dropPixel, etc.
+
     public boolean isComplete = false;
     private double distance;
     private double AprilTagFar = 0;

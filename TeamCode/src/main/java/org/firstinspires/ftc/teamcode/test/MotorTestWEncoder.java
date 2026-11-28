@@ -12,8 +12,7 @@ public class MotorTestWEncoder extends LinearOpMode {
     public void runOpMode() {
 
 
-        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, "catapult1");
-        DcMotorEx motor2 = hardwareMap.get(DcMotorEx.class, "catapult2");
+        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, "spinMotor");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

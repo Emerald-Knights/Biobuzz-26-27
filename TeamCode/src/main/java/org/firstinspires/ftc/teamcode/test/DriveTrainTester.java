@@ -11,7 +11,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.EK10582.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.EK10582.teleop.DriverStation;
+import org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants;
 import org.firstinspires.ftc.teamcode.EK10582.teleop.DriverStation;
 
 @TeleOp(name="Drive Train Tester")
@@ -23,7 +23,7 @@ public class DriveTrainTester extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        waitForStart();
+        driverStation = new DriverStation(gamepad1, gamepad2);
 
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         DcMotorEx leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -38,28 +38,61 @@ public class DriveTrainTester extends LinearOpMode {
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        waitForStart();
+
+        double slowMode = 0.5;
+        double ratio;
+        double speed = SubsystemConstants.SPEED;
+
 
         while(opModeIsActive()) {
 
-            robot.mecanumDrive.lx = driverStation.getLeftStickX();
-            robot.mecanumDrive.ly = driverStation.getLeftStickY();
-            robot.mecanumDrive.rx = driverStation.getRightStickX();
+            double lx = -driverStation.getLeftStickX();
+            double ly = driverStation.getLeftStickY();
+            double rx = driverStation.getRightStickX();
 
             //slowmode
 
             if (driverStation.getLB1()){
-                if (robot.mecanumDrive.slowMode == 0.5)
-                    robot.mecanumDrive.slowMode = 0.8;
+                if (slowMode == 0.5)
+                    slowMode = 0.8;
                 else
-                    robot.mecanumDrive.slowMode = 0.5;
+                    slowMode = 0.5;
             }
+
+            //Set motor powers to linear combination of controller input vectors
+            double lf = ly + lx + rx;
+            double rf = ly - lx - rx;
+            double lb = ly - lx + rx;
+            double rb = ly + lx - rx;
+
+            //Scales the values so none of them exceeds one while still maintaining max possible speed
+            double max = Math.max(Math.max(Math.abs(lb), Math.abs(lf)), Math.max(Math.abs(rb), Math.abs(rf)));
+            double magnitude = Math.sqrt((lx * lx) + (ly * ly) + (rx * rx));
+            //Avoids dividing by 0
+            if (max == 0) {
+                ratio = 0;
+            }
+            //If magnitude is greater than 1 divide by max speed
+            else if (magnitude > 1){
+                ratio = 1/max;
+            }
+            //If magnitude is less than 1 scale by magnitude to maintain lower speeds
+            else {
+                ratio = magnitude / max * speed;
+            }
+
+            leftFront.setPower(lf*ratio*slowMode);
+            rightFront.setPower(rf*ratio*slowMode);
+            leftBack.setPower(lb*ratio*slowMode);
+            rightBack.setPower(rb*ratio*slowMode);
 
 //        robot.mecanumDrive.update();
 //
-        telemetry.addData("lx (strafe)", robot.mecanumDrive.lx);
-        telemetry.addData("ly (forward)", robot.mecanumDrive.ly);
-        telemetry.addData("rx (turn)", robot.mecanumDrive.rx);
-        telemetry.update();
+            telemetry.addData("lx (strafe)", lx);
+            telemetry.addData("ly (forward)", ly);
+            telemetry.addData("rx (turn)", rx);
+            telemetry.update();
 
         }
     }

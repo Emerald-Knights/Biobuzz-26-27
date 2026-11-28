@@ -76,6 +76,7 @@ public abstract class AutonBase extends EKLinear {
         if(startPose() != null) {
             follower = Constants.create(hardwareMap);
             follower.setPose(startPose());
+            robot.turret.follower = follower;
         }
 
         while(!isStarted() && !isStopRequested()){

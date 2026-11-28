@@ -5,12 +5,13 @@ import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstant
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.BLUEFRONT;
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.REDBACK;
 import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstants.TrackingGoal.REDFRONT;
-
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -18,10 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
+@Config
 public class Turret extends Subsystem {
 
-    protected Follower follower;
-    private IMU imu;
+    public Follower follower;
 
     public static double P = 0.23, I = 0, D = 0, F = 12.85;
     public static double kP = 0.048001, kD = 0.0000001, kFF = 0.002;
@@ -32,19 +33,21 @@ public class Turret extends Subsystem {
     public double turretSpinPower;
     boolean latePress = false;
 
+    public double wantedTurretAngle;
+
     private double errorFilt = 0.0;
     private boolean errorFiltInit = false;
     private double lastErrorFilt = 0.0;
     private double derivFilt = 0.0;
 
     // Tune these
-    public double alpha = 0.1;        // error filter (0.1–0.3)
-    public double derivAlpha = 0.1;   // derivative filter (0.1–0.3)
-    public double kS = 0.06;           // static friction feedforward (0.0–0.08)
+    public static double alpha = 0.1;        // error filter (0.1–0.3)
+    public static double derivAlpha = 0.1;   // derivative filter (0.1–0.3)
+    public static double kS = 0.06;           // static friction feedforward (0.0–0.08)
 
     public boolean locked = false;
-    public double lockInDeg = 0.8;   // enter lock
-    public double lockOutDeg = 1.2;  // exit lock (must be > lockInDeg)
+    public static double lockInDeg = 0.8;   // enter lock
+    public static double lockOutDeg = 1.2;  // exit lock (must be > lockInDeg)
     public double lastPowerCmd = 0.0;
     private double lastYawDeg = 0.0;
     private double lastImuTime = 0.0;
@@ -77,7 +80,14 @@ public class Turret extends Subsystem {
     public double targetX;
     public double targetY;
 
+    public static double TICKS_PER_TURRET_REV = 537.7 * 65.0 / 38.0;
 
+    public static double max_deg = 170;
+    public static double min_deg = -170;
+
+    private double getTurretAngleDeg(){
+        return Robot.getInstance().spinMotor.getCurrentPosition()/ TICKS_PER_TURRET_REV * 360.0;
+    }
     public double getError() {
         error = targetHeading - currentHeading;
         return error;
@@ -98,7 +108,8 @@ public class Turret extends Subsystem {
         return a.getYaw(AngleUnit.DEGREES);
     }
 
-    private final double MAX_POWER = 0.5;
+    public static double MAX_POWER = 0.1; // test it later
+    public static double maxDelta = 0.03;
     private double power = 0;
     private final ElapsedTime timer = new ElapsedTime();
 
@@ -124,28 +135,32 @@ public class Turret extends Subsystem {
         deltaTime = Math.max(deltaTime, 1e-3);
 
         if (currentTargetGoal == REDFRONT) {
-            targetX = 60;
-            targetY = 60;
+            targetX = 57.75;
+            targetY = 56;
         }
 
         if (currentTargetGoal == REDBACK) {
-            targetX = 60;
-            targetY = 84;
+            targetX = 57.75;
+            targetY = 84.5;
         }
 
         if (currentTargetGoal == BLUEFRONT) {
-            targetX = 84;
-            targetY = 60;
+            targetX = 83.66;
+            targetY = 84.5;
         }
 
         if (currentTargetGoal == BLUEBACK) {
-            targetX = 84;
-            targetY = 84;
+            targetX = 83.66;
+            targetY = 56;
         }
 
         targetHeading = Math.atan2(targetY - yPose, targetX - xPose);
         targetHeading = Math.toDegrees(targetHeading);
-        double error = AngleUnit.normalizeDegrees(targetHeading - currentHeading);
+        distance = Math.hypot(targetX - xPose, targetY - yPose);
+        wantedTurretAngle = AngleUnit.normalizeDegrees(targetHeading - botHeading);
+        double turretAngle = getTurretAngleDeg();
+        double targetTurretAngle = Range.clip(wantedTurretAngle, min_deg, max_deg);
+        double error = targetTurretAngle - turretAngle;
 
         // --- Low-pass filter the error ---
         if (!errorFiltInit) {
@@ -172,6 +187,7 @@ public class Turret extends Subsystem {
         if (locked) {
             power = 0;
             Robot.getInstance().spinMotor.setPower(0);
+            lastPowerCmd = 0;
 
 
             derivFilt = 0;           // kill D chatter
@@ -207,8 +223,11 @@ public class Turret extends Subsystem {
 
         // Clamp
         power = Range.clip(output, -MAX_POWER, MAX_POWER);
-        double maxDelta = 0.03; // tune 0.03–0.08
         power = Range.clip(power, lastPowerCmd - maxDelta, lastPowerCmd + maxDelta);
+        if (turretAngle >= max_deg && power > 0)
+            power = 0;
+        if (turretAngle <= min_deg && power < 0)
+            power = 0;
         lastPowerCmd = power;
         Robot.getInstance().spinMotor.setPower(power);
 
@@ -221,8 +240,11 @@ public class Turret extends Subsystem {
 
     public void init(boolean isAuton) {
         follower = Constants.create(Robot.getInstance().hardwareMap);
-        pose = follower.pose();
 
+        pose = follower.pose();
+        follower.setPose(new Pose(56, 8, Math.toRadians(90)));
+        Robot.getInstance().spinMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Robot.getInstance().spinMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         currentHeading = getYawDeg();
     }
 
@@ -232,8 +254,9 @@ public class Turret extends Subsystem {
         pose = follower.pose();
         xPose = pose.x();
         yPose = pose.y();
-        currentHeading = Math.toDegrees(pose.heading());
-        turretUpdate(currentHeading, getYawDeg());
+        botHeading = Math.toDegrees(pose.heading());
+        currentHeading = AngleUnit.normalizeDegrees(botHeading + getTurretAngleDeg());
+        turretUpdate(currentHeading, 0); // change this later
 
         if(activeLaunch){
             Robot.getInstance().launchMotor.setVelocity(1000);
@@ -253,10 +276,13 @@ public class Turret extends Subsystem {
     public void printToTelemetry(Telemetry telemetry) {
         telemetry.addData("X", xPose);
         telemetry.addData("Y", yPose);
-        telemetry.addData("Turret Heading", currentHeading);
+        telemetry.addData("Shooter Field Heading", currentHeading);
+        telemetry.addData("Target Heading", targetHeading);
+        telemetry.addData("Bot Heading", botHeading);
+        telemetry.addData("Wanted Turret Angle", wantedTurretAngle);
         telemetry.addData("Power", Robot.getInstance().launchMotor.getVelocity());
-
-
+        telemetry.addData("Turret Angle", getTurretAngleDeg());
+        telemetry.addData("Distance", distance);
     }
 }
 

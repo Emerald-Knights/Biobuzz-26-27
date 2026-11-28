@@ -14,7 +14,7 @@ public class Drive extends EKLinear {
 
         while (opModeIsActive()) {
             //drive
-            robot.mecanumDrive.lx = driverStation.getLeftStickX();
+            robot.mecanumDrive.lx = -driverStation.getLeftStickX();
             robot.mecanumDrive.ly = driverStation.getLeftStickY();
             robot.mecanumDrive.rx = driverStation.getRightStickX();
 
@@ -39,23 +39,28 @@ public class Drive extends EKLinear {
             // turret target goal
             if(driverStation.gamepad2.dpad_up){
                 robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.REDFRONT;
+                robot.turret.onNoTarget();
                 }
             else if (driverStation.gamepad2.dpad_down){
                 robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.REDBACK;
+                robot.turret.onNoTarget();
             }
             else if(driverStation.gamepad2.dpad_left){
                 robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.BLUEBACK;
+                robot.turret.onNoTarget();
             }
             else if(driverStation.gamepad2.dpad_right){
                 robot.turret.currentTargetGoal = SubsystemConstants.TrackingGoal.BLUEFRONT;
+                robot.turret.onNoTarget();
             }
 
             if (driverStation.getX2()) {
                 robot.flower.cycleState();
             }
 
-            robot.transfer.activeTransfer= driverStation.gamepad1.right_bumper;
-            robot.transfer.lastBall= driverStation.gamepad1.left_bumper;
+            if (driverStation.getLB2()) {
+                robot.transfer.cycleState();
+            }
 
 
             telemetry.addData("Reset: ", driverStation.getReset());

@@ -7,8 +7,8 @@ import static org.firstinspires.ftc.teamcode.EK10582.subsystem.SubsystemConstant
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * Single owner of the flower servo. Defaults to FLOWER_MEDIUM; "down" (intake) takes
- * priority over "up" if both are requested at once.
+ * Driver cycles from Down -> medium -> up -> down with cycle state
+ * Not used in auton
  */
 public class Flower extends Subsystem {
     public enum State {
@@ -30,7 +30,6 @@ public class Flower extends Subsystem {
                 state = State.UP;
                 break;
             case UP:
-            default:
                 state = State.DOWN;
                 break;
         }
@@ -42,6 +41,9 @@ public class Flower extends Subsystem {
     }
 
     public void update(boolean isAuton) {
+        if (isAuton)
+            return;
+
 
         double position;
         switch (state) {
