@@ -58,7 +58,7 @@ public class Drive extends EKLinear {
                 robot.flower.cycleState();
             }
 
-            if (driverStation.getLB2()) {
+            if (driverStation.getY2()) {
                 robot.transfer.cycleState();
             }
 
